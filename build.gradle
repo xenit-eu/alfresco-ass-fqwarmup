@@ -34,5 +34,6 @@ dockerFile {
         // Repository to publish on.
         repository = 'hub.xenit.eu/alfresco-enterprise/alfresco-solr6-fqwarmup'
         tags = ['1.0.0-SNAPSHOT'] //optional
+        automaticTags = true
     }
 }
