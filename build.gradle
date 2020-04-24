@@ -10,6 +10,11 @@ compileJava   {
     targetCompatibility = '1.8'
 }
 
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
 dependencies {
     compileOnly('org.apache.solr:solr-core:6.6.5') {
         exclude group: 'jdk.tools', module: 'jdk.tools'
