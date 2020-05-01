@@ -1,1 +1,5 @@
 rootProject.name = 'xenit-ass-fqwarmup'
+
+include ':fq-warmup-lib'
+include ':solr-template'
+include ':docker-image-solr'

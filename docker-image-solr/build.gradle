@@ -1,0 +1,35 @@
+plugins {
+    id "eu.xenit.docker" version "5.0.5"
+    id 'base'
+}
+
+import eu.xenit.gradle.docker.tasks.DockerfileWithCopyTask
+
+configurations {
+    includeJars
+    solrTemplate
+}
+
+dependencies {
+    includeJars(project(path: ":fq-warmup-lib")) {
+        transitive = false
+    }
+    solrTemplate project(path: ":solr-template", configuration: "solrTemplate")
+}
+
+task createDockerFile(type: DockerfileWithCopyTask) {
+    dependsOn configurations.solrTemplate
+    from(solrBaseImage)
+    smartCopy(configurations.includeJars, '/opt/alfresco-search-services/solr/server/solr-webapp/webapp/WEB-INF/lib/')
+    smartCopy(zipTree(configurations.solrTemplate.singleFile), '/opt/alfresco-search-services/solrhome/templates/rerank-fqwarmup/')
+}
+
+dockerFile {
+    dockerFile = createDockerFile.getDestFile()
+    dockerBuild {
+        // Repository to publish on.
+        repository = 'hub.xenit.eu/alfresco-enterprise/alfresco-solr6-fqwarmup'
+        tags = ['1.0.0'] //optional
+        automaticTags = true
+    }
+}
