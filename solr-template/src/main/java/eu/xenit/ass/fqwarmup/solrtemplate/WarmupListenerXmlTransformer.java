@@ -2,61 +2,43 @@ package eu.xenit.ass.fqwarmup.solrtemplate;
 
 import eu.xenit.ass.trial.fqwarmup.FilterQueryWarmupListener;
 import eu.xenit.ass.trial.fqwarmup.SortWarmupListener;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 public class WarmupListenerXmlTransformer {
 
-    public void transForm(InputStream in, OutputStream out) {
+    public void transform(InputStream in, OutputStream out) throws Exception {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
 
-        try {
-            dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(in);
-            doc.getDocumentElement().normalize();
+        dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(in);
+        doc.getDocumentElement().normalize();
 
-            Element config = doc.getDocumentElement();
-            Element query = (Element) config.getElementsByTagName("query").item(0);
+        Element config = doc.getDocumentElement();
+        Element query = (Element) config.getElementsByTagName("query").item(0);
 
-            addFilterQueryWarmupListener(doc, query, "newSearcher");
-            addFilterQueryWarmupListener(doc, query, "firstSearcher");
+        addFilterQueryWarmupListener(doc, query, "newSearcher");
+        addFilterQueryWarmupListener(doc, query, "firstSearcher");
 
-            addSortWarmupListener(doc, query, "newSearcher");
-            addSortWarmupListener(doc, query, "firstSearcher");
+        addSortWarmupListener(doc, query, "newSearcher");
+        addSortWarmupListener(doc, query, "firstSearcher");
 
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(out);
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.transform(source, result);
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(out);
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.transform(source, result);
     }
 
     private static void addFilterQueryWarmupListener(Document doc, Element query, String event) {

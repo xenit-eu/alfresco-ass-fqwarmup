@@ -4,24 +4,21 @@ import eu.xenit.ass.trial.fqwarmup.FilterQueryWarmupListener;
 import eu.xenit.ass.trial.fqwarmup.SortWarmupListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 class WarmupListenerXmlTransformerTest {
 
     @Test
-    public void testTransform() throws ParserConfigurationException, IOException, SAXException {
+    public void testTransform() throws Exception {
         WarmupListenerXmlTransformer warmupListenerXmlTransformer = new WarmupListenerXmlTransformer();
         String xmlIn =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
@@ -31,7 +28,7 @@ class WarmupListenerXmlTransformerTest {
                         + "</config>";
         InputStream in = new ByteArrayInputStream(xmlIn.getBytes());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        warmupListenerXmlTransformer.transForm(in, out);
+        warmupListenerXmlTransformer.transform(in, out);
 
         byte[] bytes = out.toByteArray();
 

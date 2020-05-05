@@ -2,7 +2,6 @@ package eu.xenit.ass.fqwarmup.solrtemplate;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -11,7 +10,7 @@ import org.apache.commons.io.FileUtils;
 
 public class RerankQueryFQWarmupTemplate {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         String inputDirectory = args[0];
         String outputDirectory = args[1];
 
@@ -28,7 +27,7 @@ public class RerankQueryFQWarmupTemplate {
         OutputStream out = new FileOutputStream(outputXml.toFile());
 
         WarmupListenerXmlTransformer warmupListenerXmlTransformer = new WarmupListenerXmlTransformer();
-        warmupListenerXmlTransformer.transForm(in, out);
+        warmupListenerXmlTransformer.transform(in, out);
     }
 
 }

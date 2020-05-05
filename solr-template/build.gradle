@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "com.bmuschko.docker-remote-api" version "6.4.0"
+    id "eu.xenit.docker-config" version "5.0.4"
 }
 
 compileJava   {
@@ -14,6 +15,10 @@ test {
 
 ext {
     junitVersion = '5.6.2'
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
