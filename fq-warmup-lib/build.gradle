@@ -11,7 +11,7 @@ group 'eu.xenit.ass'
 
 repositories {
     mavenCentral()
-    jcenter()
+    jcenter() // needed for transitive dependency org.restlet.jee:org.restlet.ext.servlet:2.3.0
 }
 
 dependencies {
