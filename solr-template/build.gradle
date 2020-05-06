@@ -1,0 +1,82 @@
+plugins {
+    id "java"
+    id "com.bmuschko.docker-remote-api" version "6.4.0"
+    id "eu.xenit.docker-config" version "5.0.4"
+}
+
+compileJava   {
+    sourceCompatibility = '11'
+    targetCompatibility = '11'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+ext {
+    junitVersion = '5.6.2'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":fq-warmup-lib")
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+}
+
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+task createSolrContainer(type: DockerCreateContainer) {
+    imageId = solrBaseImage
+}
+
+import com.bmuschko.gradle.docker.tasks.container.DockerRemoveContainer
+task removeSolrContainer(type: DockerRemoveContainer){
+    dependsOn(createSolrContainer)
+    containerId = createSolrContainer.containerId
+}
+
+def templateHostPath = file("$buildDir/solrTemplates/rerank")
+import com.bmuschko.gradle.docker.tasks.container.DockerCopyFileFromContainer
+task getRerankTemplate(type: DockerCopyFileFromContainer) {
+    dependsOn(createSolrContainer)
+
+    doFirst {
+        templateHostPath.deleteDir()
+        templateHostPath.mkdirs()
+    }
+
+    containerId = createSolrContainer.containerId
+    compressed = false
+    hostPath = templateHostPath.path
+    remotePath = "/opt/alfresco-search-services/solrhome/templates/rerank"
+
+    outputs.dir(templateHostPath)
+    finalizedBy(removeSolrContainer)
+}
+
+def rerankFQWarmupDir = "$buildDir/solrTemplates/rerank-fqwarmup"
+task createTemplate(type: JavaExec) {
+    dependsOn(getRerankTemplate)
+    classpath(sourceSets.main.runtimeClasspath)
+    main = "eu.xenit.ass.fqwarmup.solrtemplate.RerankQueryFQWarmupTemplate"
+    args(templateHostPath.path, rerankFQWarmupDir)
+    inputs.dir(templateHostPath)
+    outputs.dir(rerankFQWarmupDir)
+}
+
+task packageTemplate(type: Zip) {
+    from createTemplate
+    archiveName('rerank-fqwarmup.zip')
+}
+
+configurations {
+    solrTemplate
+}
+
+artifacts {
+    solrTemplate packageTemplate
+}

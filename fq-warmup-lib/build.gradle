@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+compileJava   {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
+group 'eu.xenit.ass'
+
+repositories {
+    mavenCentral()
+    jcenter() // needed for transitive dependency org.restlet.jee:org.restlet.ext.servlet:2.3.0
+}
+
+dependencies {
+    implementation('org.apache.solr:solr-core:6.6.5') {
+        exclude group: 'jdk.tools', module: 'jdk.tools'
+    }
+}
